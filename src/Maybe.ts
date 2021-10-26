@@ -2,8 +2,8 @@ import * as O from "fp-ts/lib/Option";
 
 // Definition
 
-interface Nothing extends O.None {}
-interface Just<T> extends O.Some<T> {}
+export interface Nothing extends O.None {}
+export interface Just<T> extends O.Some<T> {}
 
 export type Maybe<T> = Nothing | Just<T>;
 
