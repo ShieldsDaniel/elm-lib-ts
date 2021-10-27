@@ -1,4 +1,4 @@
-import { writeFileSync, unlink, readFile } from "fs";
+import {writeFileSync, unlink, readFile} from "fs"
 
 // const testVal = 3;
 // const testError = new Error("test");
@@ -25,11 +25,11 @@ import { writeFileSync, unlink, readFile } from "fs";
 //   );
 
 
-const callbackThatShouldNotHappen = (_e: any): never => { throw new Error("This should never happen") };
+const callbackThatShouldNotHappen = (_e: any): never => { throw new Error ("This should never happen") }
 
-describe("The Task Monad", () => {
+describe ("The Task Monad", () => {
 
-  it("", () => { expect(true).toBe(true) });
+  it ("", () => { expect (true).toBe (true) })
 
   // describe("The Functor laws", () => {
 
@@ -38,7 +38,7 @@ describe("The Task Monad", () => {
   //     const mapped = task.map(id);
   //     compareResultOf2Tasks(task, mapped, done)
   //   });
-    
+
   //   it("Should preserve the 2nd Functor law: Functors preserve composition of morphisms `fmap (f . g) == fmap f . fmap g`", done => {
   //     const composition = (x: number) => g(f(x));
   //     const task = Task.of(testVal);
@@ -352,7 +352,7 @@ describe("The Task Monad", () => {
   //     );
   //   });
   // });
- 
+
   // describe("The static fromResult() method", () => {
 
   //   it("Should turn a `Result.Err` into a `Task` that rejects", done => {
@@ -379,5 +379,5 @@ describe("The Task Monad", () => {
   //       }
   //     );
   //   });
-  // }); 
-});
+  // });
+})

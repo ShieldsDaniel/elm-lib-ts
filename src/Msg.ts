@@ -1,39 +1,58 @@
-// interface Message { name: string }
+import {Tuple} from "./Tuple"
 
-// interface Increment extends Message {
-//   name: "Increment",
-// };
+interface Message { type: string }
 
-// interface GotText extends Message {
-//   name: "GotText",
-//   data: {target: {value: 34}},
-// };
-
-// type Msg =
-//   | Increment
-//   | GotText
-//   | { name: "SomeMsg" }
-
-enum Message {
-  Increment = "Increment",
-  GotText = "GotText"
+interface Increment extends Message {
+  type: "Increment",
 }
 
-type Msg<T = void> = {
-  type: Message,
-  data: T,
+interface GotText extends Message {
+  type: "GotText",
+  data: {target: {value: 34}},
 }
 
-type Model = {};
+type Msg =
+  | Increment
+  | GotText
+  | { type: "SomeMsg" }
 
-const update = (msg: Msg) => (model: Model) => {
-  switch(msg.type) {
-    case Message.Increment:
-      return "+1";
-    case Message.GotText:
-      const value = msg.data.target.value;
-      return value.toString();
-    default:
-      return "";
-  }
-}
+type Model = Record<string, unknown>;
+
+export const update =
+  (msg: Msg) =>
+    (model: Model): Tuple<Model, { cmd: string }> => {
+      switch (msg.type) {
+      case "Increment":
+        return [model, {cmd: ""}]
+      case "GotText":
+        return [model, {cmd: ""}]
+      case "SomeMsg":
+        return [model, {cmd: ""}]
+      }
+      return [model, {cmd: ""}]
+    }
+
+
+// enum Message {
+//   Increment = "Increment",
+//   GotText = "GotText"
+// }
+
+// type Msg<T = void> = {
+//   type: Message,
+//   data: T,
+// }
+
+// type Model = {};
+
+// const update = (msg: Msg) => (model: Model) => {
+//   switch(msg.type) {
+//     case Message.Increment:
+//       return "+1";
+//     case Message.GotText:
+//       const value = msg.data.target.value;
+//       return value.toString();
+//     default:
+//       return "";
+//   }
+// }

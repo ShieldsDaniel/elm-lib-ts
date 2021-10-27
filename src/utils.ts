@@ -1,8 +1,25 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable prefer-rest-params */
+/* eslint-disable fp/no-let */
+/* eslint-disable fp/no-mutation */
+/* eslint-disable no-case-declarations */
+/* eslint-disable fp/no-loops */
+/* eslint-disable fp/no-arguments */
+/* eslint-disable @typescript-eslint/ban-types */
 export function pipe<A>(a: A): A
 export function pipe<A, B>(a: A, ab: (a: A) => B): B
 export function pipe<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
-export function pipe<A, B, C, D>(a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): D
-export function pipe<A, B, C, D, E>(a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D, de: (d: D) => E): E
+export function pipe<A, B, C, D>(
+  a: A,
+  ab: (a: A) => B,
+  bc: (b: B) => C,
+  cd: (c: C) => D): D
+export function pipe<A, B, C, D, E>(
+  a: A,
+  ab: (a: A) => B,
+  bc: (b: B) => C,
+  cd: (c: C) => D,
+  de: (d: D) => E): E
 export function pipe<A, B, C, D, E, F>(
   a: A,
   ab: (a: A) => B,
@@ -211,7 +228,8 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   rs: (r: R) => S
 ): S
 
-export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
+export function pipe
+  <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -233,6 +251,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>
   rs: (r: R) => S,
   st: (s: S) => T
 ): T
+// eslint-disable-next-line fp/no-nil
 export function pipe(
   a: unknown,
   ab?: Function,
@@ -245,29 +264,29 @@ export function pipe(
   hi?: Function
 ): unknown {
   switch (arguments.length) {
-    case 1:
-      return a
-    case 2:
-      return ab!(a)
-    case 3:
-      return bc!(ab!(a))
-    case 4:
-      return cd!(bc!(ab!(a)))
-    case 5:
-      return de!(cd!(bc!(ab!(a))))
-    case 6:
-      return ef!(de!(cd!(bc!(ab!(a)))))
-    case 7:
-      return fg!(ef!(de!(cd!(bc!(ab!(a))))))
-    case 8:
-      return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))))
-    case 9:
-      return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))))
-    default:
-      let ret = arguments[0]
-      for (let i = 1; i < arguments.length; i++) {
-        ret = arguments[i](ret)
-      }
-      return ret
+  case 1:
+    return a
+  case 2:
+    return ab! (a)
+  case 3:
+    return bc! (ab! (a))
+  case 4:
+    return cd! (bc! (ab! (a)))
+  case 5:
+    return de! (cd! (bc! (ab! (a))))
+  case 6:
+    return ef! (de! (cd! (bc! (ab! (a)))))
+  case 7:
+    return fg! (ef! (de! (cd! (bc! (ab! (a))))))
+  case 8:
+    return gh! (fg! (ef! (de! (cd! (bc! (ab! (a)))))))
+  case 9:
+    return hi! (gh! (fg! (ef! (de! (cd! (bc! (ab! (a))))))))
+  default:
+    let ret = arguments[0]
+    for (let i = 1; i < arguments.length; i += 1) {
+      ret = arguments[i] (ret)
+    }
+    return ret
   }
 }
