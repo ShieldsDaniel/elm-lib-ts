@@ -115,7 +115,7 @@ describe ("The List Monad", () => {
     })
   })
 
-  describe ("The fold() functions", () => {
+  describe ("The foldl() and foldr() functions", () => {
     const list = [{val: 20}, {val: 2}, {val: 10}]
     const sub = (y: { val: number}) => (x: number): number => x - y.val
 
@@ -155,6 +155,64 @@ describe ("The List Monad", () => {
       const result = List.filterMap (toInt) (list)
       expect (result).toHaveLength (2)
       expect (result).toEqual ([3, 12])
+    })
+  })
+
+  describe ("The length() function", () => {
+
+    it ("Should return 0 for an empty `List`", () => {
+      expect (List.length ([])).toBe (0)
+    })
+
+    it ("Should return the length of the `List` if non-empty `List` is provided", () => {
+      expect (List.length ([1])).toBe (1)
+      expect (List.length ([1, 2])).toBe (2)
+      expect (List.length (["1", "2", "3", "4", "5"])).toBe (5)
+    })
+  })
+
+  describe ("The reverse() function", () => {
+
+    it ("Should return the reversed `List`", () => {
+      expect (List.reverse ([1, 2, 3, 4])).toEqual ([4, 3, 2, 1])
+      expect (List.reverse (["a", "list", "of", "strings"])).toEqual (["strings", "of", "list", "a"])
+    })
+  })
+
+  describe ("The member() function", () => {
+
+    it ("Should return  `false` if empty `List` is provided", () => {
+      expect (List.member ("a") ([])).toBe (false)
+    })
+
+    it ("Should return `false` if a `List` not containing the provided value is provided", () => {
+      expect (List.member ("a") (["blah", "bleh"])).toBe (false)
+    })
+
+    it ("Should return `true` if a `List` containing the provided value is provided", () => {
+      expect (List.member ("a") (["blah", "a", "bleh"])).toBe (true)
+    })
+  })
+
+  describe ("The all() function", () => {
+
+    it ("Should return `false` if all of the values in the provided `List` are not the value", () => {
+      expect (List.all ((x: string) => x === "a") (["a", "a", "any"])).toBe (false);
+    })
+
+    it ("Should return `true` if all of the values in the provided `List` are the value", () => {
+      expect (List.all ((x: string) => x === "a") (["a", "a", "a"])).toBe (true);
+    })
+  })
+
+  describe ("The any() function", () => {
+
+    it ("Should return `false` if all of the values in the provided `List` are not the value", () => {
+      expect (List.any ((x: string) => x === "a") (["this", "isn't", "any"])).toBe (false);
+    })
+
+    it ("Should return `true` if all of the values in the provided `List` are the value", () => {
+      expect (List.any ((x: string) => x === "a") (["one", "any", "a"])).toBe (true);
     })
   })
 
@@ -218,6 +276,37 @@ describe ("The List Monad", () => {
     })
   })
 
+  describe ("The sum() and product() functions", () => {
+    const nums = [1, 2, 3, 4]
+
+    it ("Should build the sum of all numbers in a `List`", () => {
+      expect (List.sum (nums)).toEqual (10)
+    })
+
+    it ("Should build the product of all numbers in a `List`", () => {
+      expect (List.product (nums)).toEqual (24)
+    })
+  })
+
+  describe ("The append() function", () => {
+
+    it ("Should return an empty `List` if 2 empty `List`s are provided", () => {
+      expect(List.append ([]) ([])).toEqual ([])
+    })
+
+    it ("Should return the first `List` if the second is empty", () => {
+      expect(List.append ([1, 2]) ([])).toEqual ([1, 2])
+    })
+
+    it ("Should return the second `List` if the first is empty", () => {
+      expect(List.append <number>([]) ([3, 4])).toEqual ([3, 4])
+    })
+
+    it ("Should return both `List`s concatenated", () => {
+      expect(List.append <number>([1, 2]) ([3, 4])).toEqual ([1, 2, 3, 4])
+    })
+  })
+
   describe ("The concat() function", () => {
 
     it ("Should return an empty `List` if and empty `List` was provided", () => {
@@ -277,6 +366,35 @@ describe ("The List Monad", () => {
     })
   })
 
+  describe ("The sort() function", () => {
+
+    it ("Should sort a list of numbers", () => {
+      expect(List.sort ([3, 4, 1, 5, 2])).toEqual ([1, 2, 3, 4, 5])
+    })
+
+    it ("Should sort a list of strings", () => {
+      expect(List.sort (["better", "a", "life", "living"])).toEqual (["a", "better", "life", "living"])
+    })
+  })
+
+  describe ("The sortWithy() function", () => {
+
+    it ("Should sort by provided `List`", () => {
+      expect(
+        List.sortWith
+        ((x: {internalVal: "VAL1" | "VAL2"}) => (y: { internalVal: "VAL1" | "VAL2"}): -1 | 0 | 1 => {
+          if (x.internalVal === "VAL1" && y.internalVal === "VAL2") {
+            return -1
+          } else if (x.internalVal === "VAL2" && y.internalVal === "VAL1") {
+            return 1
+          }
+          return 0
+        })
+        ([{internalVal: "VAL2"}, {internalVal: "VAL1"}, {internalVal: "VAL1"}, {internalVal: "VAL2"}])
+      ).toEqual([{internalVal: "VAL1"}, {internalVal: "VAL1"}, {internalVal: "VAL2"}, {internalVal: "VAL2"}])
+    })
+  })
+
   describe ("The head() function", () => {
 
     it ("Should return a `Maybe.Nothing` if the provided `List` is empty", () => {
@@ -313,6 +431,28 @@ describe ("The List Monad", () => {
     })
   })
 
+  describe ("The take() function", () => {
+
+    it ("Should return an empty `List` if an empty `List` is provided", () => {
+      expect (List.take (3) ([])).toEqual ([])
+    })
+
+    it ("Should return the slice of the beginning of the provided`List`", () => {
+      expect (List.take (2) ([1, 2, 3, 4])).toEqual ([1, 2])
+    })
+  })
+
+  describe ("The drop() function", () => {
+
+    it ("Should return an empty `List` if an empty `List` is provided", () => {
+      expect (List.drop (3) ([])).toEqual ([])
+    })
+
+    it ("Should return the slice of the end of the provided`List`", () => {
+      expect (List.drop (2) ([1, 2, 3, 4])).toEqual ([3, 4])
+    })
+  })
+
   describe ("The partition() function", () => {
 
     it ("Should return a `Tuple` of 2 empty `List`s if an empty `List` is provided", () => {
@@ -339,10 +479,65 @@ describe ("The List Monad", () => {
     })
   })
 
-  // TODO: to test
-  // sort functions
-  // -
-  // initialize
-  // get and set
-  //
+  describe ("The initialize() function", () => {
+
+    it ("Creates a new `List` based on the index and the provided morphism", () => {
+      expect (
+        List.initialize (5) ((x: number) => (x + 1) * 2)
+      ).toEqual ([2, 4, 6, 8, 10])
+    })
+  })
+
+  describe ("The get() function", () => {
+    const list = [1, 2, 3, 4, 5]
+
+    it ("Should return `Maybe.Nothing` if the index is out of range", () => {
+      const maybe = List.get (30) (list)
+      expect (Maybe.isNothing (maybe)).toBe (true)
+    })
+
+    it ("Should return `Maybe.Just` of the value at the provided index", () => {
+      const maybe = List.get (2) (list)
+      expect (Maybe.isJust (maybe)).toBe (true)
+      expect (Maybe.withDefault (0) (maybe)).toBe (3)
+    })
+  })
+
+  describe ("The set() function", () => {
+    const list = [1, 2, 3, 4, 5]
+
+    it ("Should return unchanged `List` if index out of range is provided", () => {
+      const result = List.set (20) (0) (list)
+      expect (result).toEqual (list);
+    })
+
+    it ("Should return `List` with value changed at provided index", () => {
+      const result = List.set (2) (0) (list)
+      expect (result).not.toBe (list)
+      expect (result).not.toEqual (list)
+      expect (result).toEqual ([1, 2, 0, 4, 5])
+    })
+  })
+
+  describe ("The push() function", () => {
+
+    it ("Should push a new value to the end of the `List`", () => {
+      expect(List.push (29) ([8, 19])).toEqual ([8, 19, 29])
+    })
+  })
+
+  describe ("The slice() function", () => {
+
+    it ("Should return an empty `List` if an empty list is provided", () => {
+      expect (List.slice (3) (20) ([])).toEqual ([])
+    })
+
+    it ("Should return an empty `List` start is greater than end value", () => {
+      expect (List.slice (3) (1) ([1, 2, 3, 4, 5])).toEqual ([])
+    })
+
+    it ("Should return a slice of the `List` if valid start and end values are provided", () => {
+      expect (List.slice (1) (4)  ([0, 1, 2, 3, 4])).toEqual ([1, 2, 3])
+    })
+  })
 })

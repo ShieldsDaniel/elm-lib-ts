@@ -117,8 +117,8 @@ export const map5 =
                 ) (m2)
               ) (m1)
 
-/** `caseOf : (() -> b) -> (a -> b) -> Result x a -> b` */
-export const caseOf =
+/** `fold: (() -> b) -> (a -> b) -> Result x a -> b` */
+export const fold =
   <E extends Error, A, B = A>(onErr: (e: E) => B, onOk: (x: A) => B) =>
     (m: Result<E, A>): B =>
       E.fold (
@@ -145,7 +145,7 @@ export const withDefault =
 /** `toMaybe : Result x a -> Maybe a` */
 export const toMaybe =
   <E extends Error, A>(r: Result<E, A>): Maybe.Maybe<A> =>
-    caseOf<E, A, Maybe.Maybe<A>> (
+    fold<E, A, Maybe.Maybe<A>> (
       _e => Maybe.Nothing,
       x => Maybe.Just (x)
     ) (r)
@@ -154,7 +154,7 @@ export const toMaybe =
 export const fromMaybe =
   <E extends Error, A>(error: E) =>
     (m: Maybe.Maybe<A>): Result<E, A> =>
-      Maybe.caseOf<A, Result<E, A>> (
+      Maybe.fold<A, Result<E, A>> (
         () => Err (error),
         x => Ok (x)
       ) (m)

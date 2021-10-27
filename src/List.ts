@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable fp/no-mutating-methods */
 /* eslint-disable multiline-comment-style */
 /* eslint-disable fp/no-nil */
 import * as Maybe from "./Maybe"
 import {isSome} from "fp-ts/lib/Option"
 import {max, min, NonEmptyArray} from "fp-ts/lib/NonEmptyArray"
+import * as A from "fp-ts/lib/Array"
 import * as N from "fp-ts/lib/number"
 import * as S from "fp-ts/lib/string"
 import {pipe} from "./utils"
@@ -101,7 +104,7 @@ export const reverse = <T>(list: List<T>): List<T> =>
   (list)
 
 /** `member : a -> List a -> Bool` */
-export const member = <T>(x: T) => (list: List<T>) =>
+export const member = <T>(x: T) => (list: List<T>): boolean =>
   list.includes (x)
 
 /** `all : (a -> Bool) -> List a -> Bool` */
@@ -156,7 +159,7 @@ export const sum =
 /** `product : List number -> number` */
 export const product =
   (list: List<number>): number =>
-    list.reduce ((accum, x) => accum * x, 0)
+    list.reduce ((accum, x) => accum * x, 1)
 
 // Combine
 
@@ -257,14 +260,33 @@ export const map5 =
 
 // Sort
 
+type Comparable = number | string;
+type Order = -1 | 0 | 1
+
 /** `sort : List comparable -> List comparable` */
-// export const sort = () => {}
+export const sort = <T>(list: List<T>): List<T> => {
+  if (length (list) > 0) {
+    if (typeof list[0] === "string") {
+      // @ts-ignore
+      return A.sort (S.Ord) (list)
+    } else if (typeof list[0] === "number") {
+      // @ts-ignore
+      return A.sort (N.Ord) (list)
+    }
+  }
+  return list
+}
 
 /** `sortBy : (a -> comparable) -> List a -> List a` */
-// export const sortBy = () => {}
+// export const sortBy =
+//   <T>(compare: (x: T) => Comparable) =>
+//     (list: List<T>): List<T> =>
+//       [...list].sort ((a: T, b: T) => )
 
-/** `sortWith : (a -> a -> Order) -> List a -> List a` */
-// export const sortWith = () => {}
+export const sortWith =
+  <T>(compare: (x: T) => (y: T) => Order) =>
+    (list: List<T>): List<T> =>
+      [...list].sort ((a: T, b: T) => compare (a) (b))
 
 // Deconstruct
 
@@ -329,7 +351,7 @@ export const initialize =
   (len: number) =>
   <T>(morphism: (x: number) => T): List<T> =>
       pipe (
-        repeat (len) (0),
+        range (0) (len - 1),
         map (morphism)
       )
 

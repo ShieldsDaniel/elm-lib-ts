@@ -103,7 +103,7 @@ describe ("The Result Monad", () => {
     it ("Should apply the provided `Error -> a` function if the `Result` is a `Err`", () => {
       const result = Result.Err (testError)
       const lazy = jest.fn (() => testVal)
-      const actualVal = Result.caseOf (lazy, id) (result)
+      const actualVal = Result.fold (lazy, id) (result)
       expect (lazy).toHaveBeenCalledTimes (1)
       expect (actualVal).toEqual (testVal)
     })
@@ -111,7 +111,7 @@ describe ("The Result Monad", () => {
     it ("Should apply the provided morphism `a -> b` function to the value inside of the `Result`, if it is a `Ok a`", () => {
       const result = Result.Ok (1)
       const lazyMorphism = jest.fn (x => testVal)
-      const actualVal = Result.caseOf (() => 0, lazyMorphism) (result)
+      const actualVal = Result.fold (() => 0, lazyMorphism) (result)
       expect (lazyMorphism).toHaveBeenCalledTimes (1)
       expect (actualVal).toEqual (testVal)
     })

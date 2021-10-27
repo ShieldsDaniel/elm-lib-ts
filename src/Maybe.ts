@@ -121,8 +121,8 @@ export const map5 =
                 ) (m2)
               ) (m1)
 
-/** `caseOf : (() -> b) -> (a -> b) -> Maybe a -> b` */
-export const caseOf =
+/** `fold: (() -> b) -> (a -> b) -> Maybe a -> b` */
+export const fold =
   <A, B = A>(onNothing: () => B, onJust: (x: A) => B) =>
     (m: Maybe<A>): B =>
       O.fold (
@@ -139,3 +139,7 @@ export const andThen =
       O.chain (fn) (m)
 
 // TODO: add `sequence`
+
+export const isJust = <T>(m: Maybe<T>): boolean => O.isSome (m)
+
+export const isNothing = <T>(m: Maybe<T>): boolean => O.isNone (m)

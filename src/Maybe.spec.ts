@@ -102,7 +102,7 @@ describe ("The Maybe Monad", () => {
     it ("Should apply the provided lazy `() -> a` function if the `Maybe` is a `Nothing`", () => {
       const maybe = Maybe.Nothing
       const lazy = jest.fn (() => testVal)
-      const actualVal = Maybe.caseOf (lazy, id) (maybe)
+      const actualVal = Maybe.fold (lazy, id) (maybe)
       expect (lazy).toHaveBeenCalledTimes (1)
       expect (actualVal).toEqual (testVal)
     })
@@ -110,7 +110,7 @@ describe ("The Maybe Monad", () => {
     it ("Should apply the provided morphism `a -> b` function to the value inside of the `Maybe`, if it is a `Just a`", () => {
       const maybe = Maybe.Just (1)
       const lazyMorphism = jest.fn (x => testVal)
-      const actualVal = Maybe.caseOf (() => 0, lazyMorphism) (maybe)
+      const actualVal = Maybe.fold (() => 0, lazyMorphism) (maybe)
       expect (lazyMorphism).toHaveBeenCalledTimes (1)
       expect (actualVal).toEqual (testVal)
     })

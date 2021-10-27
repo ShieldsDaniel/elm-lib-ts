@@ -1,4 +1,8 @@
-import {Tuple} from "./Tuple"
+import * as T from "./Tuple"
+import * as L from "./List"
+
+type Tuple<T, U> = T.Tuple<T, U>
+type List<T> = L.List<T>
 
 interface Message { type: string }
 
@@ -11,12 +15,12 @@ interface GotText extends Message {
   data: {target: {value: 34}},
 }
 
-type Msg =
+export type Msg =
   | Increment
   | GotText
   | { type: "SomeMsg" }
 
-type Model = Record<string, unknown>;
+type Model = { some: string, value: number };
 
 export const update =
   (msg: Msg) =>
@@ -25,34 +29,8 @@ export const update =
       case "Increment":
         return [model, {cmd: ""}]
       case "GotText":
-        return [model, {cmd: ""}]
+        return [model, {cmd: msg.data.target.toString ()}]
       case "SomeMsg":
         return [model, {cmd: ""}]
       }
-      return [model, {cmd: ""}]
     }
-
-
-// enum Message {
-//   Increment = "Increment",
-//   GotText = "GotText"
-// }
-
-// type Msg<T = void> = {
-//   type: Message,
-//   data: T,
-// }
-
-// type Model = {};
-
-// const update = (msg: Msg) => (model: Model) => {
-//   switch(msg.type) {
-//     case Message.Increment:
-//       return "+1";
-//     case Message.GotText:
-//       const value = msg.data.target.value;
-//       return value.toString();
-//     default:
-//       return "";
-//   }
-// }

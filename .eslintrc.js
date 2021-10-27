@@ -48,7 +48,6 @@ module.exports = {
     "fp/no-mutating-assign": "error",
     "fp/no-mutating-methods": "error",
     "fp/no-mutation": "error",
-    "fp/no-nil": "error",
     "fp/no-proxy": "error",
     "fp/no-rest-parameters": "error",
     "fp/no-this": "error",
