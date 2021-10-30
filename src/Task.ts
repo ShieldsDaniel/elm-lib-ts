@@ -1,15 +1,50 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable fp/no-unused-expression */
+/* eslint-disable multiline-comment-style */
 import * as F from "fluture"
+import {pipe} from "fp-ts/lib/function"
+import {isPromise} from "util/types"
+import * as List from "./List"
+
+type List<T> = List.List<T>
 
 // Tasks
 
-type Task<E extends Error, T> = F.FutureInstance<E, T>;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Task<E extends Error, T> extends F.FutureInstance<E, T> {}
 
-// TODO: finish once we've figured out Msg and Cmd
+// TODO: Msg needs a tag or name along with the expected return type
+// TODO: Cmd should basically just be the Task and some way to add
+// TODO: the type/name info from the message
 /** `perform : (a -> msg) -> Task Never a -> Cmd msg` */
-// export const perform = () => {}
+export const perform =
+  <T>(impure: (() => T) | (() => Promise<T>)): Task<never, T> =>
+    F.Future ((_rej, res) => {
+      const returnVal = impure ()
+      if (isPromise (returnVal)) {
+        returnVal.then (res)
+      } else {
+        res (returnVal)
+      }
+      return () => {}
+    })
 
 /** `attempt : (Result x a -> msg) -> Task x a -> Cmd msg` */
-// export const attempt = () => {}
+export const attempt =
+  <T>(impure: (() => T) | (() => Promise<T>)): Task<Error, T> =>
+    F.Future ((rej, res) => {
+      try {
+        const returnVal = impure ()
+        if (isPromise (returnVal)) {
+          returnVal.then (res).catch (rej)
+        } else {
+          res (returnVal)
+        }
+      } catch (e: unknown) {
+        rej (new Error ((e as Error).message))
+      }
+      return () => {}
+    })
 
 // Chains
 
@@ -28,7 +63,19 @@ export const fail = <E extends Error>(e: E): Task<E, never> =>
   F.reject (e)
 
 /** `sequence : List (Task x a) -> Task x (List a)` */
-// export const sequence = () => {}
+export const sequence =
+  <E extends Error, T>(tasks: List<Task<E, T>>): Task<E, List<T>> =>
+    List.foldl
+    ((x: Task<E, T>) => (task: Task<E, List<T>>): Task<E, List<T>> =>
+      pipe (
+        task,
+        andThen (listOfTasks =>
+          F.map<T, List<T>> (y => [...listOfTasks, y]) (x)
+        )
+      )
+    )
+    (succeed ([] as List<T>))
+    (tasks)
 
 // Maps
 
@@ -49,12 +96,12 @@ export const map2 =
           ) (t2)
         ) (t1)
 
-// `map3 :
-//    (a -> b -> c -> result) ->
-//    Task x a ->
-//    Task x b ->
-//    Task x c ->
-//    Task x result`
+/** `map3 :
+       (a -> b -> c -> result) ->
+       Task x a ->
+       Task x b ->
+       Task x c ->
+       Task x result` */
 export const map3 =
   <
     E extends Error,
@@ -74,13 +121,13 @@ export const map3 =
             ) (t2)
           ) (t1)
 
-// `map4 :
-//  (a -> b -> c -> d -> result)
-//  -> Task x a
-//  -> Task x b
-//  -> Task x c
-//  -> Task x d
-//  -> Task x result`
+/** `map4 :
+     (a -> b -> c -> d -> result)
+     -> Task x a
+     -> Task x b
+     -> Task x c
+     -> Task x d
+     -> Task x result` */
 export const map4 =
   <
     Er extends Error,
@@ -104,14 +151,14 @@ export const map4 =
               ) (t2)
             ) (t1)
 
-// `map5 :
-//  (a -> b -> c -> d -> e -> result)
-//  -> Task x a
-//  -> Task x b
-//  -> Task x c
-//  -> Task x d
-//  -> Task x e
-//  -> Task x result`
+/** `map5 :
+     (a -> b -> c -> d -> e -> result)
+     -> Task x a
+     -> Task x b
+     -> Task x c
+     -> Task x d
+     -> Task x e
+     -> Task x result` */
 export const map5 =
   <
     Er extends Error,
