@@ -18,7 +18,7 @@ export interface Task<E extends Error, T> extends F.FutureInstance<E, T> {}
 // TODO: the type/name info from the message
 /** `perform : (a -> msg) -> Task Never a -> Cmd msg` */
 export const perform =
-  <T>(impure: (() => T) | (() => Promise<T>)): Task<never, T> =>
+  <T>(impure: () => Promise<T>): Task<never, T> =>
     F.Future ((_rej, res) => {
       const returnVal = impure ()
       if (isPromise (returnVal)) {
@@ -31,7 +31,7 @@ export const perform =
 
 /** `attempt : (Result x a -> msg) -> Task x a -> Cmd msg` */
 export const attempt =
-  <T>(impure: (() => T) | (() => Promise<T>)): Task<Error, T> =>
+  <T>(impure: () => Promise<T>): Task<Error, T> =>
     F.Future ((rej, res) => {
       try {
         const returnVal = impure ()

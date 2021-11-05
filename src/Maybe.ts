@@ -5,6 +5,7 @@ import * as O from "fp-ts/lib/Option"
 export type Nothing = O.None
 export type Just<T> = O.Some<T>
 
+
 export type Maybe<T> = Nothing | Just<T>;
 
 /** `Nothing : Maybe Never` */

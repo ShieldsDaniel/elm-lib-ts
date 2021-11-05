@@ -1,25 +1,51 @@
+/* eslint-disable no-undef */
+/* eslint-disable fp/no-unused-expression */
 import {commandLineApp} from "./Application"
 import * as Tuple from "./Tuple"
 import * as Cmd from "./Cmd"
+import * as Task from "./Task"
+import readline from "readline"
 
 type Tuple<T, U> = Tuple.Tuple<T, U>
 type Cmd<Msg> = Cmd.Cmd<Msg>
 
 interface Message { type: string }
 
-interface Increment extends Message {
-  type: "Increment",
+interface GotName extends Message {
+  type: "GotName"
+  data: string
 }
 
-interface GotText extends Message {
-  type: "GotText",
-  data: {target: {value: 34}},
+const readLine = (questionText: string): Cmd<GotName> =>
+  Task.perform (() =>
+    new Promise<GotName> ((res, _rej) => {
+      const rl = readline.createInterface ({
+        input: process.stdin,
+        output: process.stdout,
+      })
+      rl.question (questionText, answer => {
+        res ({
+          type: "GotName",
+          data: answer.trim (),
+        })
+        rl.close ()
+      })
+    })
+  )
+
+interface LoggedResult extends Message {
+  type: "LoggedResult"
 }
+
+const consoleLog = (logString: string): Cmd<LoggedResult> =>
+  Task.perform (async () => {
+    console.log (logString)
+    return {type: "LoggedResult"}
+  })
 
 export type Msg =
-  | Increment
-  | GotText
-  | { type: "SomeMsg" }
+  | GotName
+  | LoggedResult
 
 type Model = { some: string, value: number };
 
@@ -27,18 +53,19 @@ export const update =
   (msg: Msg) =>
     (model: Model): Tuple<Model, Cmd<Msg | void>> => {
       switch (msg.type) {
-      case "Increment":
-        return [model, Cmd.none ()]
-      case "GotText":
-        return [model, Cmd.none ()]
-      case "SomeMsg":
+      case "GotName":
+        return [model, consoleLog ("So your name appears to be " + msg.data)]
+      case "LoggedResult":
         return [model, Cmd.none ()]
       }
     }
 
-const main = (() =>
+function main(args: string[]): void {
   commandLineApp<Model, Msg> ({
-    init: [{some: "hello", value: 12}, Cmd.none ()],
+    init: [{some: "hello", value: 12}, readLine ("What is your name?\n")],
     update: update,
     subscriptions: () => [],
-  })) ()
+  })
+}
+
+main (process.argv)

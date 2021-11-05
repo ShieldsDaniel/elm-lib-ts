@@ -1,7 +1,7 @@
 import {Task, succeed, sequence} from "./Task"
 import {List} from "./List"
 
-export type Cmd<T = void> = Task<Error, T>
+export type Cmd<T = void> = Task<Error | never, T>
 
 export const none = (): Cmd<void> => succeed (undefined)
 
