@@ -75,6 +75,7 @@ module.exports = {
     "prefer-template": ["off"],
     "template-curly-spacing": ["error", "never"],
     "template-tag-spacing": ["error", "never"],
-    "yield-star-spacing": ["error", {"before": false, "after": true}]
+    "yield-star-spacing": ["error", {"before": false, "after": true}],
+    "multiline-comment-style": "off"
   }
 }
