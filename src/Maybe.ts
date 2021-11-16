@@ -39,12 +39,12 @@ export const map2 =
           ) (m2)
         ) (m1)
 
-// `map3 :
-//     (a -> b -> c -> value)
-//     -> Maybe a
-//     -> Maybe b
-//     -> Maybe c
-//     -> Maybe value`
+/** `map3 :
+       (a -> b -> c -> value)
+       -> Maybe a
+       -> Maybe b
+       -> Maybe c
+       -> Maybe value` */
 export const map3 =
   <A, B = A, C = A, D = A>(fn: (a: A) => (b: B) => (c: C) => D) =>
     (m1: Maybe<A>) =>
