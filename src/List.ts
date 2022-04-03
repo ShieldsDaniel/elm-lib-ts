@@ -99,7 +99,7 @@ export const length = <T>(list: List<T>): number =>
 /** `reverse : List a -> List a` */
 export const reverse = <T>(list: List<T>): List<T> =>
   foldr
-  <T, List<T>> ((x: T) => (accum: List<T>) => [...accum, x])
+  ((x: T) => (accum: List<T>) => [...accum, x])
   ([] as List<T>)
   (list)
 

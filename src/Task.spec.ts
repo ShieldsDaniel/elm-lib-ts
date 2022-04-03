@@ -1,6 +1,5 @@
 import * as Task from "./Task"
 import { fork } from "fluture"
-import {writeFileSync, unlink, readFile} from "fs"
 import { pipe } from "./utils"
 
 type Task<E extends Error, T> = Task.Task<E, T>
